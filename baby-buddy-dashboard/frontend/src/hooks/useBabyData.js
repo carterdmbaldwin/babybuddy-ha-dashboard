@@ -53,19 +53,19 @@ export function useBabyData() {
       const now = new Date();
 
       const todayStr = toLocalISODate(now);
-      const todayMin = `${todayStr}T00:00:00`;
-      const todayMax = `${todayStr}T23:59:59`;
+      const todayMin = new Date(`${todayStr}T00:00:00`).toISOString();
+      const todayMax = new Date(`${todayStr}T23:59:59`).toISOString();
 
       const twentyFourAgo = new Date(now.getTime() - 24 * 60 * 60 * 1000);
-      const sleepMin = `${toLocalISODate(twentyFourAgo)}T${String(twentyFourAgo.getHours()).padStart(2, "0")}:${String(twentyFourAgo.getMinutes()).padStart(2, "0")}:00`;
+      const sleepMin = new Date(`${toLocalISODate(twentyFourAgo)}T${String(twentyFourAgo.getHours()).padStart(2, "0")}:${String(twentyFourAgo.getMinutes()).padStart(2, "0")}:00`).toISOString();
 
       const weekAgo = new Date(now);
       weekAgo.setDate(weekAgo.getDate() - 6);
-      const weekMin = `${toLocalISODate(weekAgo)}T00:00:00`;
+      const weekMin = new Date(`${toLocalISODate(weekAgo)}T00:00:00`).toISOString();
 
       const monthAgo = new Date(now);
       monthAgo.setDate(monthAgo.getDate() - 29);
-      const monthMin = `${toLocalISODate(monthAgo)}T00:00:00`;
+      const monthMin = new Date(`${toLocalISODate(monthAgo)}T00:00:00`).toISOString();
 
       const c = childId || undefined;
 

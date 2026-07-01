@@ -28,13 +28,13 @@ export default function PumpingForm({ childId, entry, onDone, onClose }) {
       if (amount) data.amount = parseFloat(amount);
       if (notes.trim()) data.notes = notes.trim();
       if (isEdit) {
-        data.start = `${start}:00`;
-        data.end = `${end}:00`;
+        data.start = new Date(`${start}:00`).toISOString();
+        data.end = new Date(`${end}:00`).toISOString();
         await api.updatePumping(entry.id, data);
       } else {
         data.child = childId;
-        data.start = `${start}:00`;
-        data.end = `${end}:00`;
+        data.start = new Date(`${start}:00`).toISOString();
+        data.end = new Date(`${end}:00`).toISOString();
         await api.createPumping(data);
       }
       onDone();

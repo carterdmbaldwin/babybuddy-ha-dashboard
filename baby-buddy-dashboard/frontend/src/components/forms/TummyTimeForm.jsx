@@ -22,7 +22,7 @@ export default function TummyTimeForm({ childId, timerId, entry, onDone, onClose
     setSaving(true);
     try {
       if (isEdit) {
-        const data = { start: `${start}:00`, end: `${end}:00` };
+        const data = { start: new Date(`${start}:00`).toISOString(), end: new Date(`${end}:00`).toISOString() };
         if (milestone.trim()) data.milestone = milestone.trim();
         await api.updateTummyTime(entry.id, data);
       } else {
@@ -30,8 +30,8 @@ export default function TummyTimeForm({ childId, timerId, entry, onDone, onClose
         if (timerId) {
           data.timer = timerId;
         } else {
-          data.start = `${start}:00`;
-          data.end = `${end}:00`;
+          data.start = new Date(`${start}:00`).toISOString();
+          data.end = new Date(`${end}:00`).toISOString();
         }
         if (milestone.trim()) data.milestone = milestone.trim();
         await api.createTummyTime(data);

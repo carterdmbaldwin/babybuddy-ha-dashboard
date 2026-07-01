@@ -46,16 +46,16 @@ export default function FeedingForm({ childId, timerId, entry, onDone, onClose }
       if (amount) data.amount = parseFloat(amount);
       if (notes.trim()) data.notes = notes.trim();
       if (isEdit) {
-        data.start = `${start}:00`;
-        data.end = `${end}:00`;
+        data.start = new Date(`${start}:00`).toISOString();
+        data.end = new Date(`${end}:00`).toISOString();
         await api.updateFeeding(entry.id, data);
       } else {
         data.child = childId;
         if (timerId) {
           data.timer = timerId;
         } else {
-          data.start = `${start}:00`;
-          data.end = `${end}:00`;
+          data.start = new Date(`${start}:00`).toISOString();
+          data.end = new Date(`${end}:00`).toISOString();
         }
         await api.createFeeding(data);
       }

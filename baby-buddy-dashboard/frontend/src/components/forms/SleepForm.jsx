@@ -24,8 +24,8 @@ export default function SleepForm({ childId, timerId, entry, onDone, onClose }) 
     try {
       if (isEdit) {
         const data = {
-          start: `${start}:00`,
-          end: `${end}:00`,
+          start: new Date(`${start}:00`).toISOString(),
+          end: new Date(`${end}:00`).toISOString(),
         };
         if (notes.trim()) data.notes = notes.trim();
         await api.updateSleep(entry.id, data);
@@ -35,8 +35,8 @@ export default function SleepForm({ childId, timerId, entry, onDone, onClose }) 
         if (timerId) {
           data.timer = timerId;
         } else {
-          data.start = `${start}:00`;
-          data.end = `${end}:00`;
+          data.start = new Date(`${start}:00`).toISOString();
+          data.end = new Date(`${end}:00`).toISOString();
         }
         await api.createSleep(data);
       }

@@ -37,7 +37,7 @@ export default function MedicationForm({ childId, entry, onDone, onClose }) {
       if (dosage) data.dosage = parseFloat(dosage);
       if (notes.trim()) data.notes = notes.trim();
       
-      data.time = `${time}:00`;
+      data.time = new Date(`${time}:00`).toISOString();
       
       if (isEdit) {
         await api.updateMedication(entry.id, data);

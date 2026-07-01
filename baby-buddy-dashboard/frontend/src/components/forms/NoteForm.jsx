@@ -19,7 +19,7 @@ export default function NoteForm({ childId, entry, onDone, onClose }) {
     if (!note.trim()) return;
     setSaving(true);
     try {
-      const data = { note: note.trim(), time: `${time}:00` };
+      const data = { note: note.trim(), time: new Date(`${time}:00`).toISOString() };
       if (isEdit) {
         await api.updateNote(entry.id, data);
       } else {
