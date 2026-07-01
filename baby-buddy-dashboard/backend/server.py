@@ -153,5 +153,5 @@ if STATIC_DIR.exists():
         return Response(
             content=index_html,
             media_type="text/html",
-            headers={"Cache-Control": "no-cache"},
+            headers={"Cache-Control": "no-cache, no-store, must-revalidate", "Pragma": "no-cache", "Expires": "0"},
         )
