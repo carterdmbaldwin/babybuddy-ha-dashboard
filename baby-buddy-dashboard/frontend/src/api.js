@@ -89,11 +89,11 @@ export const api = {
     request(`pumping/${id}/`, { method: "PATCH", body: JSON.stringify(data) }),
 
   // Medication
-  getMedication: (params) => request(`medications/${qs(params)}`),
+  getMedication: (params) => request(`medication/${qs(params)}`),
   createMedication: (data) =>
-    request("medications/", { method: "POST", body: JSON.stringify(data) }),
+    request("medication/", { method: "POST", body: JSON.stringify(data) }),
   updateMedication: (id, data) =>
-    request(`medications/${id}/`, { method: "PATCH", body: JSON.stringify(data) }),
+    request(`medication/${id}/`, { method: "PATCH", body: JSON.stringify(data) }),
 
   // BMI
   getBmi: (params) => request(`bmi/${qs(params)}`),
