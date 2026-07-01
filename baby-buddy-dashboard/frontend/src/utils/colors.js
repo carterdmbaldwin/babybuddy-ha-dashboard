@@ -7,4 +7,8 @@ export const colors = {
   temp: "#EF4444",
   height: "#6366F1",
   note: "#84CC16",
+  medication: "#F43F5E",
+  pumping: "#0EA5E9",
+  bmi: "#14B8A6",
+  headCircumference: "#D946EF",
 };

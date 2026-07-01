@@ -69,6 +69,26 @@ export function toFeedingTimeline(feedings, volumeUnit = "mL") {
   }));
 }
 
+export function toPumpingTimeline(pumpings, volumeUnit = "mL") {
+  return pumpings.map((p) => ({
+    time: formatTime(p.time || p.start || p.date),
+    label: `${p.amount ? p.amount + " " + volumeUnit : "Pumping"}`,
+    detail: timeAgo(p.time || p.start || p.date),
+    amount: p.amount || 0,
+    entry: p,
+  }));
+}
+
+export function toMedicationTimeline(medications) {
+  return medications.map((m) => ({
+    time: formatTime(m.time || m.date),
+    label: `${m.name || "Medication"} ${m.amount ? "- " + m.amount : ""}`,
+    detail: timeAgo(m.time || m.date),
+    amount: m.amount || "",
+    entry: m,
+  }));
+}
+
 export function toDiaperTimeline(changes) {
   return changes.map((c) => ({
     time: formatTime(c.time),
@@ -149,6 +169,10 @@ export function aggregateByDayOfWeek(entries, valueKey, dateKey = "start") {
     if (key in sums) sums[key] += parseFloat(e[valueKey] || 0);
   });
   return days.map((d) => ({ day: d.label, amount: Math.round(sums[d.dateStr]) }));
+}
+
+export function aggregatePumpingByDay(entries, valueKey = "amount") {
+  return aggregateByDayOfWeek(entries, valueKey, "time");
 }
 
 export function aggregateSleepByDay(entries) {

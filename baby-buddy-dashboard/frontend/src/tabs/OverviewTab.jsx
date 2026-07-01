@@ -24,6 +24,9 @@ import {
   aggregateByDayOfWeek,
   aggregateSleepByDay,
   aggregateTummyByDay,
+  aggregatePumpingByDay,
+  toPumpingTimeline,
+  toMedicationTimeline,
   getEntriesForDay,
   parseDuration,
 } from "../utils/formatters";
@@ -31,7 +34,7 @@ import { useUnits } from "../utils/units";
 
 const COLLAPSED_COUNT = 2;
 
-export default function OverviewTab({ feedings, weeklyFeedings: weeklyFeedingsRaw, sleepEntries, weeklySleep, changes, tummyTimes, weeklyTummyTimes, onEditEntry }) {
+export default function OverviewTab({ feedings, weeklyFeedings: weeklyFeedingsRaw, sleepEntries, weeklySleep, changes, tummyTimes, weeklyTummyTimes, medications, pumpings, weeklyPumpings, onEditEntry }) {
   const units = useUnits();
   const [expanded, setExpanded] = useState({});
   const [dayModal, setDayModal] = useState(null);
@@ -41,11 +44,15 @@ export default function OverviewTab({ feedings, weeklyFeedings: weeklyFeedingsRa
   const feedingTimeline = toFeedingTimeline(feedings, units.volume);
   const diaperTimeline = toDiaperTimeline(changes);
   const sleepBlocks = toSleepBlocks(sleepEntries);
+  const medicationTimeline = toMedicationTimeline(medications || []);
+  const pumpingTimeline = toPumpingTimeline(pumpings || [], units.volume);
   const weeklyFeedings = aggregateByDayOfWeek(weeklyFeedingsRaw, "amount");
   const sleepByDay = aggregateSleepByDay(weeklySleep);
   const tummyByDay = aggregateTummyByDay(weeklyTummyTimes);
+  const pumpByDay = aggregatePumpingByDay(weeklyPumpings || [], "amount");
 
   const totalFeeding = feedings.reduce((s, f) => s + (f.amount || 0), 0);
+  const totalPumping = (pumpings || []).reduce((s, p) => s + (p.amount || 0), 0);
   const totalSleep = sleepEntries.reduce(
     (s, e) => s + parseDuration(e.duration),
     0
@@ -76,6 +83,8 @@ export default function OverviewTab({ feedings, weeklyFeedings: weeklyFeedingsRa
       dayData = getEntriesForDay(weeklySleep, day, "start");
     } else if (type === "tummy") {
       dayData = getEntriesForDay(weeklyTummyTimes, day, "start");
+    } else if (type === "pumping") {
+      dayData = getEntriesForDay(weeklyPumpings || [], day, "time");
     }
     setSelectedBar(null);
     setDayModal({ day, type, data: dayData });
@@ -368,6 +377,91 @@ export default function OverviewTab({ feedings, weeklyFeedings: weeklyFeedingsRa
             ) : (
               <div style={{ color: "var(--text-dim)", fontSize: 13, textAlign: "center", padding: 20 }}>
                 No tummy time recorded today
+              </div>
+            )}
+          </SectionCard>
+        </div>
+
+        {/* Pumping */}
+        <div className="fade-in fade-in-7">
+          <SectionCard title="Recent Pumpings" icon={<Icons.BreastPump />} color={colors.pumping}>
+            {pumpingTimeline.length > 0 ? (
+              <div style={{ display: "flex", flexDirection: "column" }}>
+                {(expanded.pumpings ? pumpingTimeline : pumpingTimeline.slice(0, COLLAPSED_COUNT)).map((p, i, arr) => (
+                  <div key={i} className="entry-clickable" onClick={() => onEditEntry?.("pumping", p.entry)}>
+                    <TimelineItem
+                      time={p.time}
+                      label={p.label}
+                      detail={p.detail}
+                      color={colors.pumping}
+                      isLast={i === arr.length - 1}
+                    />
+                  </div>
+                ))}
+                {pumpingTimeline.length > COLLAPSED_COUNT && (
+                  <button className="expand-toggle" onClick={() => toggle("pumpings")}>
+                    {expanded.pumpings ? "Show less" : `Show ${pumpingTimeline.length - COLLAPSED_COUNT} more`}
+                  </button>
+                )}
+              </div>
+            ) : (
+              <div style={{ color: "var(--text-dim)", fontSize: 13, textAlign: "center", padding: 20 }}>
+                No pumping recorded today
+              </div>
+            )}
+            {pumpByDay.some((d) => d.amount > 0) && (
+              <>
+                <div style={{ marginTop: 16, height: 120 }}>
+                  <ResponsiveContainer width="100%" height="100%">
+                    <BarChart data={pumpByDay} barSize={18} onClick={(data) => handleChartClick(data, "pumping")}>
+                      <CartesianGrid strokeDasharray="3 3" stroke="#252836" vertical={false} />
+                      <XAxis dataKey="day" tick={{ fontSize: 11, fill: "#5A6178" }} axisLine={false} tickLine={false} />
+                      <YAxis hide />
+                      <Tooltip content={<CustomTooltip />} />
+                      <Bar dataKey="amount" fill={colors.pumping} radius={[6, 6, 0, 0]} opacity={0.85} cursor="pointer" />
+                    </BarChart>
+                  </ResponsiveContainer>
+                </div>
+                {selectedBar?.type === "pumping" && (
+                  <ChartDetailBar
+                    label={selectedBar.label}
+                    value={selectedBar.value}
+                    unit={units.volume}
+                    color={colors.pumping}
+                    onViewEntries={() => openDayModal(selectedBar.label, "pumping")}
+                    onDismiss={() => setSelectedBar(null)}
+                  />
+                )}
+              </>
+            )}
+          </SectionCard>
+        </div>
+
+        {/* Medication */}
+        <div className="fade-in fade-in-8">
+          <SectionCard title="Recent Medications" icon={<Icons.Pill />} color={colors.medication}>
+            {medicationTimeline.length > 0 ? (
+              <div style={{ display: "flex", flexDirection: "column" }}>
+                {(expanded.medications ? medicationTimeline : medicationTimeline.slice(0, COLLAPSED_COUNT)).map((m, i, arr) => (
+                  <div key={i} className="entry-clickable" onClick={() => onEditEntry?.("medication", m.entry)}>
+                    <TimelineItem
+                      time={m.time}
+                      label={m.label}
+                      detail={m.detail}
+                      color={colors.medication}
+                      isLast={i === arr.length - 1}
+                    />
+                  </div>
+                ))}
+                {medicationTimeline.length > COLLAPSED_COUNT && (
+                  <button className="expand-toggle" onClick={() => toggle("medications")}>
+                    {expanded.medications ? "Show less" : `Show ${medicationTimeline.length - COLLAPSED_COUNT} more`}
+                  </button>
+                )}
+              </div>
+            ) : (
+              <div style={{ color: "var(--text-dim)", fontSize: 13, textAlign: "center", padding: 20 }}>
+                No medications recorded today
               </div>
             )}
           </SectionCard>

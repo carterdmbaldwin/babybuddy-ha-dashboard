@@ -85,6 +85,29 @@ export const api = {
   getPumping: (params) => request(`pumping/${qs(params)}`),
   createPumping: (data) =>
     request("pumping/", { method: "POST", body: JSON.stringify(data) }),
+  updatePumping: (id, data) =>
+    request(`pumping/${id}/`, { method: "PATCH", body: JSON.stringify(data) }),
+
+  // Medication
+  getMedication: (params) => request(`medications/${qs(params)}`),
+  createMedication: (data) =>
+    request("medications/", { method: "POST", body: JSON.stringify(data) }),
+  updateMedication: (id, data) =>
+    request(`medications/${id}/`, { method: "PATCH", body: JSON.stringify(data) }),
+
+  // BMI
+  getBmi: (params) => request(`bmi/${qs(params)}`),
+  createBmi: (data) =>
+    request("bmi/", { method: "POST", body: JSON.stringify(data) }),
+  updateBmi: (id, data) =>
+    request(`bmi/${id}/`, { method: "PATCH", body: JSON.stringify(data) }),
+
+  // Head Circumference
+  getHeadCircumference: (params) => request(`head-circumference/${qs(params)}`),
+  createHeadCircumference: (data) =>
+    request("head-circumference/", { method: "POST", body: JSON.stringify(data) }),
+  updateHeadCircumference: (id, data) =>
+    request(`head-circumference/${id}/`, { method: "PATCH", body: JSON.stringify(data) }),
 
   // Notes
   getNotes: (params) => request(`notes/${qs(params)}`),

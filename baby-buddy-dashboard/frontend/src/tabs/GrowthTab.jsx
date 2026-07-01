@@ -19,17 +19,21 @@ import { colors } from "../utils/colors";
 import { useUnits } from "../utils/units";
 import { toGrowthSeries, formatGrowthTick, dailyFeedingTotals, dailySleepTotals, getEntriesForDate } from "../utils/formatters";
 
-export default function GrowthTab({ weights, heights, monthlyFeedings, monthlySleep, onEditEntry }) {
+export default function GrowthTab({ weights, heights, bmis, headCircumferences, monthlyFeedings, monthlySleep, onEditEntry }) {
   const units = useUnits();
   const [dayModal, setDayModal] = useState(null);
   const [selectedBar, setSelectedBar] = useState(null);
-  const weightSeries = toGrowthSeries(weights, "weight");
-  const heightSeries = toGrowthSeries(heights, "height");
+  const weightSeries = toGrowthSeries(weights || [], "weight");
+  const heightSeries = toGrowthSeries(heights || [], "height");
+  const bmiSeries = toGrowthSeries(bmis || [], "bmi");
+  const headSeries = toGrowthSeries(headCircumferences || [], "head_circumference");
   const feedingSeries = dailyFeedingTotals(monthlyFeedings);
   const sleepSeries = dailySleepTotals(monthlySleep);
 
-  const latestWeight = weights[0];
-  const latestHeight = heights[0];
+  const latestWeight = weights?.[0];
+  const latestHeight = heights?.[0];
+  const latestBmi = bmis?.[0];
+  const latestHead = headCircumferences?.[0];
 
   // Compute averages for stat cards
   const feedingDays = feedingSeries.filter((d) => d.amount > 0);
@@ -145,6 +149,84 @@ export default function GrowthTab({ weights, heights, monthlyFeedings, monthlySl
             {latestHeight && (
               <div style={{ fontSize: 12, color: "var(--text-muted)", marginTop: 4 }}>
                 {new Date(latestHeight.date).toLocaleDateString()}
+              </div>
+            )}
+          </div>
+        </div>
+
+        <div className="fade-in fade-in-3">
+          <div
+            style={{
+              background: "var(--card-bg)",
+              borderRadius: 16,
+              padding: "20px 22px",
+              border: "1px solid var(--border)",
+            }}
+          >
+            <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 10 }}>
+              <div
+                style={{
+                  width: 30,
+                  height: 30,
+                  borderRadius: 8,
+                  background: `${colors.bmi}18`,
+                  color: colors.bmi,
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                }}
+              >
+                <Icons.Activity />
+              </div>
+              <span style={{ fontSize: 12, color: "var(--text-dim)", fontWeight: 500, textTransform: "uppercase", letterSpacing: "0.03em" }}>
+                BMI
+              </span>
+            </div>
+            <div style={{ fontSize: 28, fontWeight: 700, color: "var(--text)", letterSpacing: "-0.02em" }}>
+              {latestBmi ? `${latestBmi.bmi}` : "—"}
+            </div>
+            {latestBmi && (
+              <div style={{ fontSize: 12, color: "var(--text-muted)", marginTop: 4 }}>
+                {new Date(latestBmi.date).toLocaleDateString()}
+              </div>
+            )}
+          </div>
+        </div>
+
+        <div className="fade-in fade-in-4">
+          <div
+            style={{
+              background: "var(--card-bg)",
+              borderRadius: 16,
+              padding: "20px 22px",
+              border: "1px solid var(--border)",
+            }}
+          >
+            <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 10 }}>
+              <div
+                style={{
+                  width: 30,
+                  height: 30,
+                  borderRadius: 8,
+                  background: `${colors.headCircumference}18`,
+                  color: colors.headCircumference,
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                }}
+              >
+                <Icons.Ruler />
+              </div>
+              <span style={{ fontSize: 12, color: "var(--text-dim)", fontWeight: 500, textTransform: "uppercase", letterSpacing: "0.03em" }}>
+                Head
+              </span>
+            </div>
+            <div style={{ fontSize: 28, fontWeight: 700, color: "var(--text)", letterSpacing: "-0.02em" }}>
+              {latestHead ? `${latestHead.head_circumference} ${units.length}` : "—"}
+            </div>
+            {latestHead && (
+              <div style={{ fontSize: 12, color: "var(--text-muted)", marginTop: 4 }}>
+                {new Date(latestHead.date).toLocaleDateString()}
               </div>
             )}
           </div>
@@ -408,6 +490,98 @@ export default function GrowthTab({ weights, heights, monthlyFeedings, monthlySl
             ) : (
               <div style={{ color: "var(--text-dim)", fontSize: 13, textAlign: "center", padding: 40 }}>
                 {heightSeries.length === 1 ? "Need at least 2 measurements to show trend" : "No height data recorded yet"}
+              </div>
+            )}
+          </SectionCard>
+        </div>
+
+        {/* BMI Chart */}
+        <div className="fade-in fade-in-9">
+          <SectionCard title="BMI Trend" icon={<Icons.Activity />} color={colors.bmi}>
+            {bmiSeries.length >= 2 ? (
+              <>
+                <div style={{ height: 200 }}>
+                  <ResponsiveContainer width="100%" height="100%">
+                    <LineChart data={bmiSeries} onClick={(data) => handleChartClick(data, "bmi")}>
+                      <CartesianGrid strokeDasharray="3 3" stroke="#252836" vertical={false} />
+                      <XAxis dataKey="timestamp" type="number" scale="time" domain={["dataMin", "dataMax"]} tickFormatter={formatGrowthTick} tick={{ fontSize: 11, fill: "#5A6178" }} axisLine={false} tickLine={false} />
+                      <YAxis tick={{ fontSize: 11, fill: "#5A6178" }} axisLine={false} tickLine={false} domain={["auto", "auto"]} />
+                      <Tooltip content={<CustomTooltip labelFormatter={formatGrowthTick} />} />
+                      <Line
+                        type="monotone"
+                        dataKey="bmi"
+                        stroke={colors.bmi}
+                        strokeWidth={2.5}
+                        dot={{ fill: colors.bmi, r: 4, cursor: "pointer" }}
+                        activeDot={{ r: 6, cursor: "pointer" }}
+                      />
+                    </LineChart>
+                  </ResponsiveContainer>
+                </div>
+                {selectedBar?.type === "bmi" && (
+                  <ChartDetailBar
+                    label={formatGrowthTick(selectedBar.label)}
+                    value={selectedBar.value}
+                    unit=""
+                    color={colors.bmi}
+                    actionLabel="Edit"
+                    onViewEntries={() => {
+                      if (selectedBar.entry) onEditEntry?.("bmi", selectedBar.entry);
+                      setSelectedBar(null);
+                    }}
+                    onDismiss={() => setSelectedBar(null)}
+                  />
+                )}
+              </>
+            ) : (
+              <div style={{ color: "var(--text-dim)", fontSize: 13, textAlign: "center", padding: 40 }}>
+                {bmiSeries.length === 1 ? "Need at least 2 measurements to show trend" : "No BMI data recorded yet"}
+              </div>
+            )}
+          </SectionCard>
+        </div>
+
+        {/* Head Circumference Chart */}
+        <div className="fade-in fade-in-10">
+          <SectionCard title="Head Circumference Trend" icon={<Icons.Ruler />} color={colors.headCircumference}>
+            {headSeries.length >= 2 ? (
+              <>
+                <div style={{ height: 200 }}>
+                  <ResponsiveContainer width="100%" height="100%">
+                    <LineChart data={headSeries} onClick={(data) => handleChartClick(data, "head_circumference")}>
+                      <CartesianGrid strokeDasharray="3 3" stroke="#252836" vertical={false} />
+                      <XAxis dataKey="timestamp" type="number" scale="time" domain={["dataMin", "dataMax"]} tickFormatter={formatGrowthTick} tick={{ fontSize: 11, fill: "#5A6178" }} axisLine={false} tickLine={false} />
+                      <YAxis tick={{ fontSize: 11, fill: "#5A6178" }} axisLine={false} tickLine={false} domain={["auto", "auto"]} />
+                      <Tooltip content={<CustomTooltip labelFormatter={formatGrowthTick} />} />
+                      <Line
+                        type="monotone"
+                        dataKey="head_circumference"
+                        stroke={colors.headCircumference}
+                        strokeWidth={2.5}
+                        dot={{ fill: colors.headCircumference, r: 4, cursor: "pointer" }}
+                        activeDot={{ r: 6, cursor: "pointer" }}
+                      />
+                    </LineChart>
+                  </ResponsiveContainer>
+                </div>
+                {selectedBar?.type === "head_circumference" && (
+                  <ChartDetailBar
+                    label={formatGrowthTick(selectedBar.label)}
+                    value={selectedBar.value}
+                    unit={units.length}
+                    color={colors.headCircumference}
+                    actionLabel="Edit"
+                    onViewEntries={() => {
+                      if (selectedBar.entry) onEditEntry?.("head_circumference", selectedBar.entry);
+                      setSelectedBar(null);
+                    }}
+                    onDismiss={() => setSelectedBar(null)}
+                  />
+                )}
+              </>
+            ) : (
+              <div style={{ color: "var(--text-dim)", fontSize: 13, textAlign: "center", padding: 40 }}>
+                {headSeries.length === 1 ? "Need at least 2 measurements to show trend" : "No head circumference data recorded yet"}
               </div>
             )}
           </SectionCard>

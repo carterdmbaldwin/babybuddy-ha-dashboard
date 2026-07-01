@@ -106,4 +106,19 @@ export const Icons = {
       <line x1="6" y1="6" x2="18" y2="18" />
     </svg>
   ),
+  Pill: () => (
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M10.5 20.5A7 7 0 1 1 20.5 10.5L10.5 20.5z" />
+      <path d="M3.5 13.5A7 7 0 1 1 13.5 3.5L3.5 13.5z" />
+      <line x1="8.5" y1="8.5" x2="15.5" y2="15.5" />
+    </svg>
+  ),
+  BreastPump: () => (
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M12 2v20" />
+      <path d="M8 22h8" />
+      <path d="M12 2a4 4 0 0 0-4 4v10a4 4 0 0 0 8 0V6a4 4 0 0 0-4-4z" />
+      <path d="M12 11h-4" />
+    </svg>
+  ),
 };

@@ -32,6 +32,11 @@ export function useBabyData() {
   const [temperatures, setTemperatures] = useState([]);
   const [weights, setWeights] = useState([]);
   const [heights, setHeights] = useState([]);
+  const [medications, setMedications] = useState([]);
+  const [pumpings, setPumpings] = useState([]);
+  const [weeklyPumpings, setWeeklyPumpings] = useState([]);
+  const [bmis, setBmis] = useState([]);
+  const [headCircumferences, setHeadCircumferences] = useState([]);
   const [monthlyFeedings, setMonthlyFeedings] = useState([]);
   const [monthlySleep, setMonthlySleep] = useState([]);
   const [notes, setNotes] = useState([]);
@@ -75,6 +80,11 @@ export function useBabyData() {
         tempRes,
         weightRes,
         heightRes,
+        medRes,
+        pumpRes,
+        weeklyPumpRes,
+        bmiRes,
+        headRes,
         timersRes,
         notesRes,
         monthlyFeedingsRes,
@@ -90,6 +100,11 @@ export function useBabyData() {
         api.getTemperature({ child: c, limit: 10, ordering: "-time" }),
         api.getWeight({ child: c, limit: 20, ordering: "-date" }),
         api.getHeight({ child: c, limit: 20, ordering: "-date" }),
+        api.getMedication({ child: c, limit: 20, ordering: "-time" }),
+        api.getPumping({ child: c, start_min: todayMin, start_max: todayMax, limit: 100, ordering: "-time" }),
+        api.getPumping({ child: c, start_min: weekMin, limit: 200, ordering: "-time" }),
+        api.getBmi({ child: c, limit: 20, ordering: "-date" }),
+        api.getHeadCircumference({ child: c, limit: 20, ordering: "-date" }),
         api.getTimers(),
         api.getNotes({ child: c, limit: 20, ordering: "-time" }),
         api.getFeedings({ child: c, start_min: monthMin, limit: 500, ordering: "-start" }),
@@ -106,6 +121,11 @@ export function useBabyData() {
       setTemperatures(tempRes.results || []);
       setWeights(weightRes.results || []);
       setHeights(heightRes.results || []);
+      setMedications(medRes.results || []);
+      setPumpings(pumpRes.results || []);
+      setWeeklyPumpings(weeklyPumpRes.results || []);
+      setBmis(bmiRes.results || []);
+      setHeadCircumferences(headRes.results || []);
       setTimers(timersRes.results || []);
       setNotes(notesRes.results || []);
       setMonthlyFeedings(monthlyFeedingsRes.results || []);
@@ -236,6 +256,11 @@ export function useBabyData() {
     temperatures,
     weights,
     heights,
+    medications,
+    pumpings,
+    weeklyPumpings,
+    bmis,
+    headCircumferences,
     monthlyFeedings,
     monthlySleep,
     notes,
