@@ -16,6 +16,10 @@ import TummyTimeForm from "./components/forms/TummyTimeForm";
 import NoteForm from "./components/forms/NoteForm";
 import WeightForm from "./components/forms/WeightForm";
 import HeightForm from "./components/forms/HeightForm";
+import BmiForm from "./components/forms/BmiForm";
+import HeadCircumferenceForm from "./components/forms/HeadCircumferenceForm";
+import PumpingForm from "./components/forms/PumpingForm";
+import MedicationForm from "./components/forms/MedicationForm";
 import TimerButton from "./components/TimerButton";
 import "./styles.css";
 
@@ -33,6 +37,7 @@ const ACTION_GROUPS = [
       { id: "sleep", label: "Sleep", icon: <Icons.Moon />, color: colors.sleep },
       { id: "diaper", label: "Diaper", icon: <Icons.Droplet />, color: colors.diaper },
       { id: "tummy", label: "Tummy", icon: <Icons.Sun />, color: colors.tummy },
+      { id: "pumping", label: "Pumping", icon: <Icons.BreastPump />, color: colors.pumping },
     ],
   },
   {
@@ -41,12 +46,15 @@ const ACTION_GROUPS = [
       { id: "temp", label: "Temp", icon: <Icons.Temp />, color: colors.temp },
       { id: "weight", label: "Weight", icon: <Icons.Weight />, color: colors.growth },
       { id: "height", label: "Height", icon: <Icons.Ruler />, color: colors.height },
+      { id: "bmi", label: "BMI", icon: <Icons.Activity />, color: colors.bmi },
+      { id: "head_circumference", label: "Head", icon: <Icons.Ruler />, color: colors.headCircumference },
     ],
   },
   {
     label: "Note",
     actions: [
       { id: "note", label: "Note", icon: <Icons.StickyNote />, color: colors.note },
+      { id: "medication", label: "Medication", icon: <Icons.Pill />, color: colors.medication },
     ],
   },
 ];
@@ -231,6 +239,9 @@ export default function App() {
             changes={data.changes}
             tummyTimes={data.tummyTimes}
             weeklyTummyTimes={data.weeklyTummyTimes}
+            pumpings={data.pumpings}
+            weeklyPumpings={data.weeklyPumpings}
+            medications={data.medications}
             onEditEntry={(type, entry) => setModal({ type, entry })}
           />
         )}
@@ -238,6 +249,8 @@ export default function App() {
           <GrowthTab
             weights={data.weights}
             heights={data.heights}
+            bmis={data.bmis}
+            headCircumferences={data.headCircumferences}
             monthlyFeedings={data.monthlyFeedings}
             monthlySleep={data.monthlySleep}
             onEditEntry={(type, entry) => setModal({ type, entry })}
@@ -397,6 +410,38 @@ export default function App() {
       )}
       {modal?.type === "note" && (
         <NoteForm
+          childId={data.child?.id}
+          entry={modal.entry}
+          onDone={handleFormDone}
+          onClose={closeModal}
+        />
+      )}
+      {modal?.type === "bmi" && (
+        <BmiForm
+          childId={data.child?.id}
+          entry={modal.entry}
+          onDone={handleFormDone}
+          onClose={closeModal}
+        />
+      )}
+      {modal?.type === "head_circumference" && (
+        <HeadCircumferenceForm
+          childId={data.child?.id}
+          entry={modal.entry}
+          onDone={handleFormDone}
+          onClose={closeModal}
+        />
+      )}
+      {modal?.type === "pumping" && (
+        <PumpingForm
+          childId={data.child?.id}
+          entry={modal.entry}
+          onDone={handleFormDone}
+          onClose={closeModal}
+        />
+      )}
+      {modal?.type === "medication" && (
+        <MedicationForm
           childId={data.child?.id}
           entry={modal.entry}
           onDone={handleFormDone}
