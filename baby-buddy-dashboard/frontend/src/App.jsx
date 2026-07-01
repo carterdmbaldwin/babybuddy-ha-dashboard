@@ -38,6 +38,7 @@ const ACTION_GROUPS = [
       { id: "diaper", label: "Diaper", icon: <Icons.Droplet />, color: colors.diaper },
       { id: "tummy", label: "Tummy", icon: <Icons.Sun />, color: colors.tummy },
       { id: "pumping", label: "Pumping", icon: <Icons.BreastPump />, color: colors.pumping },
+      { id: "medication", label: "Medication", icon: <Icons.Pill />, color: colors.medication },
     ],
   },
   {
@@ -54,7 +55,6 @@ const ACTION_GROUPS = [
     label: "Note",
     actions: [
       { id: "note", label: "Note", icon: <Icons.StickyNote />, color: colors.note },
-      { id: "medication", label: "Medication", icon: <Icons.Pill />, color: colors.medication },
     ],
   },
 ];
