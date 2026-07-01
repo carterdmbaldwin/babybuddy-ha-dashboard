@@ -80,9 +80,12 @@ export function FormField({ label, children }) {
 }
 
 export function FormInput({ type = "text", ...props }) {
+  const isNumber = type === "number";
   return (
     <input
       type={type}
+      inputMode={isNumber ? "decimal" : undefined}
+      step={isNumber && !props.step ? "any" : props.step}
       {...props}
       style={{
         width: "100%",
