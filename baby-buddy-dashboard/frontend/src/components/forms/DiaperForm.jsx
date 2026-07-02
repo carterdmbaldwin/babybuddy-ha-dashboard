@@ -29,7 +29,7 @@ export default function DiaperForm({ childId, entry, onDone, onClose, preset }) 
     e.preventDefault();
     setSaving(true);
     try {
-      const data = { wet, solid, time: new Date(`${time}:00`).toISOString() };
+      const data = { wet, solid, time: `${time}:00-07:00` };
       if (color) data.color = color;
       if (notes.trim()) data.notes = notes.trim();
       if (isEdit) {
