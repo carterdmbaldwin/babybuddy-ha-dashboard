@@ -9,7 +9,7 @@ function toLocalDatetime(date) {
   return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}T${pad(date.getHours())}:${pad(date.getMinutes())}`;
 }
 
-export default function PumpingForm({ childId, entry, onDone, onClose }) {
+export default function PumpingForm({ childId, timerId, entry, onDone, onClose }) {
   const units = useUnits();
   const isEdit = !!entry;
   const now = new Date();
@@ -33,8 +33,12 @@ export default function PumpingForm({ childId, entry, onDone, onClose }) {
         await api.updatePumping(entry.id, data);
       } else {
         data.child = childId;
-        data.start = `${start}:00-07:00`;
-        data.end = `${end}:00-07:00`;
+        if (timerId) {
+          data.timer = timerId;
+        } else {
+          data.start = `${start}:00-07:00`;
+          data.end = `${end}:00-07:00`;
+        }
         await api.createPumping(data);
       }
       onDone();
@@ -57,22 +61,30 @@ export default function PumpingForm({ childId, entry, onDone, onClose }) {
             autoFocus
           />
         </FormField>
-        <FormField label="Start Time">
-          <FormInput
-            type="datetime-local"
-            value={start}
-            onChange={(e) => setStart(e.target.value)}
-            required
-          />
-        </FormField>
-        <FormField label="End Time">
-          <FormInput
-            type="datetime-local"
-            value={end}
-            onChange={(e) => setEnd(e.target.value)}
-            required
-          />
-        </FormField>
+        {!isEdit && timerId ? (
+          <p style={{ fontSize: 13, color: "var(--text-muted)", marginBottom: 16 }}>
+            The timer's start and end times will be used for this pumping session.
+          </p>
+        ) : (
+          <>
+            <FormField label="Start Time">
+              <FormInput
+                type="datetime-local"
+                value={start}
+                onChange={(e) => setStart(e.target.value)}
+                required
+              />
+            </FormField>
+            <FormField label="End Time">
+              <FormInput
+                type="datetime-local"
+                value={end}
+                onChange={(e) => setEnd(e.target.value)}
+                required
+              />
+            </FormField>
+          </>
+        )}
         <FormField label="Notes">
           <FormInput
             as="textarea"

@@ -63,6 +63,7 @@ const TIMER_TYPES = [
   { id: "feeding", label: "Feeding", icon: <Icons.Bottle />, color: colors.feeding },
   { id: "sleep", label: "Sleep", icon: <Icons.Moon />, color: colors.sleep },
   { id: "tummy", label: "Tummy Time", icon: <Icons.Sun />, color: colors.tummy },
+  { id: "pumping", label: "Pumping", icon: <Icons.BreastPump />, color: colors.pumping },
 ];
 
 function toLocalDatetime(date) {
